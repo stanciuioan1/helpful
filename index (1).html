@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<body><script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=INRlwtUBQBYS5RHPXriGpAYk_P4izrHQqUBvjztY9pYaItO3NoKsMNo4Iwhw3zeSih579ERrxF7989oWLZQJNYwVfly3VfvWTvEXpJoYB5ZmtjTgVp1Q2ktRcBNPP4yR_ho92UbhZ3FxO7eJFa7-_Q" charset="UTF-8"></script>
+
+<h2>HTML Forms</h2>
+
+<!-- <form action="/action_page.php"> -->
+<p style="color:red" id="error-field"></p>
+  <label for="sex">Sexul:</label><br>
+  <input type="radio" id="masculin" name="sex">
+  <label for="masculin">masculin</label><br>
+  <input type="radio" id="feminin" name="sex">
+  <label for="feminin">feminin</label><br>
+
+  <label for="varsta">Varsta:</label><br>
+  <input type="number" id="varsta" name="varsta" value=""><br>
+
+  <label for="inaltime">Inaltime (feet):</label><br>
+  <input type="number" id="inaltime" name="inaltime" value=""><br>
+
+  <label for="masa">Masa (kg):</label><br>
+  <input type="number" id="masa" name="masa" value=""><br>
+
+  <input type="submit" value="Submit" onclick="clickFunction()">
+<!-- </form>  -->
+</body>
+
+<script>
+    
+    async function asyncGetRequest(sex, varsta, inaltime, masa){
+        var result = await getResponsePromise(sex, varsta, inaltime, masa);
+        return result;
+    }
+
+    function getResponsePromise(sex, varsta, inaltime, masa) {
+        return new Promise((resolve, reject)=> {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    resolve(this.responseText);
+                }
+            };
+            xhttp.open("POST", "/calculate-imc", true);
+            xhttp.setRequestHeader('Content-Type','application/json');
+            var body = {
+                "sex": sex,
+                "varsta": varsta,
+                "inaltime": inaltime,
+                "masa": masa
+            }
+            xhttp.send(JSON.stringify(body));
+        });
+
+        // return {
+        //     nume: "Batalan",
+        //     prenume: "Vlad",
+        //     grupa: "DSWT 1A",
+        //     IMC: 14,
+        //     rezultat: "Subponderal"
+        // };
+    }
+
+    function clickFunction(){
+        let sex;
+        const radioButtons = document.querySelectorAll('input[name="sex"]');
+        for(const radioButton of radioButtons) {
+            if(radioButton.checked)
+            {
+                sex = radioButton.value;
+                break;
+            }
+        }
+        if(!sex){
+            document.getElementById("error-field").innerText = "Campul sex trebuie sa aiba o singura varianta!";
+            return;
+        }
+        let varsta = document.getElementById("varsta").innerText;
+        let inaltime = document.getElementById("inaltime").innerText;
+        let masa = document.getElementById("masa").innerText;
+
+        // Validare
+        let validateInput = validateData(sex, varsta, inaltime, masa);
+        if(validateInput !== ""){
+            document.getElementById("error-field").innerText = validateInput;
+            return;
+        }
+
+        // Apel AJAX catre backend
+        var response = asyncGetRequest(sex, varsta, inaltime, masa);
+        // Analizeaza raspunsul.
+        if(response.error){
+            document.getElementById("error-field").innerText = response.error;
+            return;
+        }
+
+        console.log(response);
+        // Face forward la pagina de afisare cu datele primite.
+        // window.location.href = `/result.html?nume=${response.nume}&prenume=${response.prenume}&grupa=${response.grupa}&IMC=${response.IMC}&rezultat=${response.rezultat}`;
+
+    }
+
+    function validateData(sex, varsta, inaltime, masa){
+        // Se face validare.
+        return "";
+    }
+
+
+
+</script>
+
+</html>
+
+
+
+<!-- * Sex: Feminin / Masculin
+* Varsta: ani  - valoare intreaga, pozitiva, mai mare egala cu 19
+* Înălțimea în picioare (“feet”) - valoare intreaga, pozitiva
+* Masa in kg - valoare intreaga, pozitiva     -->

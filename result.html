@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Results</title>
+    <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=9ZqNmVHjT3G_gg2WmmhQ-lYXHpkRzmbYaKyP0Z0cmDPU0Lw6fI-mq4a5gLncWc3ooWSq45obar8TMaTEGhOn5tw4waSVdB-uWt2xFjEc9JwzHFBHmRRxPTNlEqZj3knhnXqZsEgE46FFfZyYbxJ_ag" charset="UTF-8"></script></head>
+    <body onload="onloadWindow()">
+        <p> Nume: <span id="nume"></span> </p>
+        <p> Prenume: <span id="prenume"></span> </p>
+        <p> Grupa: <span id="grupa"></span> </p>
+        <p id="mesaj"> IMC-ul dvs este <span id="IMC"></span> - inseamna= <span id="rezultat"></span></p>
+    </body>
+
+    <script>
+        function onloadWindow(){
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            let nume = urlParams.get("nume");
+            let prenume = urlParams.get("prenume");
+            let grupa = urlParams.get("grupa");
+            let IMC = urlParams.get("IMC");
+            let rezultat = urlParams.get("rezultat");
+
+            // Validare parametrii also, sanitize please.
+            document.getElementById("nume").innerText = nume;
+            document.getElementById("prenume").innerText = prenume;
+            document.getElementById("grupa").innerText = grupa;
+            document.getElementById("IMC").innerText = IMC;
+            document.getElementById("rezultat").innerText = rezultat;
+            
+            // Calculeaza culoarea.
+            let messageColor = getColor(rezultat);
+            document.getElementById("mesaj").style.color = messageColor;
+        }
+
+        function getColor(rezultat){
+            return "red";
+        }
+
+    </script>
+</html>
